@@ -332,6 +332,8 @@ class dCTL {
 							$packageList[$key]['type'] = $packageRecord['type'];
 							$packageList[$key]['date'] = $packageRecord['date'];
 							$packageList[$key]['collection_ref'] = $packageRecord['collection_ref'];
+                            // CHANGE 25/05/2010 SIMONE: tento di aggiungere source_edition_location
+							$packageList[$key]['source_edition_location'] = $packageRecord['source_edition_location'];
 							if (! $justRefs) {
 								$packageList[$key]['id'] = $packageRecord['id'];
 								$packageList[$key]['full'] = $packageRecord['full'];
@@ -387,6 +389,7 @@ class dCTL {
 		$packageRecord['type'] = '';
 		$packageRecord['date'] = '';
 		$packageRecord['collection_ref'] = '';
+		$packageRecord['source_edition_location'] = '';
 		if (! $justRefs) {
 			$packageRecord['id'] = '';
 			$packageRecord['full'] = '';
@@ -427,6 +430,8 @@ class dCTL {
 				$xquery .= "\n".' title="{$node3/tei:title[@type=\'main\']}"';
 				$xquery .= "\n".' publisher="{$node2/tei:publisher}"';
 				$xquery .= "\n".' pubplace="{$node2/tei:pubPlace}"';
+				// SIMONE 26/05/2010 tento di aggiungere la source_edition_location
+				$xquery .= "\n".' source_edition_location="{$node2/tei:distributor[@role=\'location\']}"';
 			};
 			$xquery .= "\n".'> ';
 			$xquery .= "\n".' </node> ';
@@ -448,6 +453,8 @@ class dCTL {
 						$packageRecord['type'] = (string)$xml_node['type'];
 						$packageRecord['date'] = (string)$xml_node['date'];
 						$packageRecord['collection_ref'] = 'xml://'.(string)$xml_node['collection_ref'];
+        				// SIMONE 26/05/2010 tento di aggiungere la source_edition_location
+						$packageRecord['source_edition_location'] = (string)$xml_node['source_edition_location'];
 						if (! $justRefs) {
 							$packageRecord['id'] = (string)$xml_node['id'];
 							$packageRecord['full'] = cleanWebString($packageRecord['id'].': '.$packageRecord['short'], FIELD_STRING_LENGTH).SYS_DBL_SPACE;
