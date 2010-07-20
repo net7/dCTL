@@ -1,7 +1,7 @@
 <teiHeader xml:id="&collection_id;.header">
 	<fileDesc>
 		<titleStmt>
-			<title type="main">&collection_work; (electronic edition)</title>
+			<title type="main">&collection_work; (Edizione di riferimento)</title>
 			<author>&dctl_ctl;</author>
 			<editor>
 				<name type="ctl" key="ctl">&dctl_ctl;</name>
@@ -24,7 +24,7 @@
 			</respStmt>
 			<respStmt>
 				<resp>Technical advisor</resp>
-				<name key="ctl" type="person">Enrico Possenti (info@noveopiu.com)</name>
+				<name key="ctl" type="person"></name>
 			</respStmt>
 		</titleStmt>
 		<editionStmt>
