@@ -269,7 +269,6 @@ declare namespace '.XMLDB_EXIST_NS.';
 declare namespace '.XMLDB_TRANSFORM_NS.';
 declare namespace '.XMLDB_FUNCTX_NS.';
 import module namespace kwic="'.XMLDB_KWIC_NS.'";
-declare option exist:timeout "' . XMLDB_TIMEOUT . '";
 declare option exist:output-size-limit "'.XMLDB_MAXCOUNT.'";
 declare option exist:serialize "method=xhtml";
 declare option exist:serialize "highlight-matches=both";
