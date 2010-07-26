@@ -4,9 +4,9 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 function dctl_segmentize($theString) {
 	$resultText = '::';
- $theArray = explode(DISTINCT_SEP2, $theString);
+	$theArray = explode(DISTINCT_SEP2, $theString);
 	$hash = array();
- foreach($theArray as $idx=>$theLine) {
+	foreach($theArray as $idx=>$theLine) {
 		$thisLine = $theArray{$idx};
 		if ($thisLine != '') {
 			$theValues = explode(DISTINCT_SEP, $thisLine);
@@ -29,13 +29,13 @@ function dctl_segmentize($theString) {
 			$hash[$idx]['l'] = $theCantoLabel;
 			$hash[$idx]['o'] = $theOctave;
 			$hash[$idx]['v'] = $theVerse;
-  };
+	  };
 	};
 	$idx = count($hash)-1;
 	while (isset($hash[$idx-1])) {
-	 if ($hash[$idx]['c'] != $hash[$idx-1]['c'])
-	  $resultText = '; '.$hash[$idx]['l'].$resultText;
-	 --$idx;
+		if ($hash[$idx]['c'] != $hash[$idx-1]['c'])
+			$resultText = '; '.$hash[$idx]['l'].$resultText;
+		--$idx;
 	};
 	return $resultText;
 };
@@ -62,10 +62,10 @@ function SimpleXMLElementObj_into_xml($xml_parent, $xml_children, $linkingNode= 
 };
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 function simplexml_append(SimpleXMLElement $parent, SimpleXMLElement $new_child){
- $node1 = dom_import_simplexml($parent);
- $dom_sxe = dom_import_simplexml($new_child);
- $node2 = $node1->ownerDocument->importNode($dom_sxe, true);
- $node1->appendChild($node2);
+	$node1 = dom_import_simplexml($parent);
+	$dom_sxe = dom_import_simplexml($new_child);
+	$node2 = $node1->ownerDocument->importNode($dom_sxe, true);
+	$node1->appendChild($node2);
 };
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 function simplexml_insert(SimpleXMLElement $parent, SimpleXMLElement $new_child){
@@ -197,7 +197,11 @@ function ajax_saveLink($selector = 'new', $id1='', $id2='', $label='', $what='',
 	$collection_id = $collection_id	[0];
  if ($collection_id != '') {
 		$thePath = DCTL_PROJECT_PATH.$collection_id.SYS_PATH_SEP;
-		switch ($what ) {
+
+    // $f = fopen('/tmp/diocaro.log', 'a');
+    // fwrite($f, "------------------\n\n" . $thePath);
+    
+		switch ($what) {
 			case 'lnk':
 				$thePath .= DCTL_FILE_LINKER;
 			break;
@@ -208,14 +212,25 @@ function ajax_saveLink($selector = 'new', $id1='', $id2='', $label='', $what='',
 					$resultKO .= 'ERROR: CASE UNIMPLEMENTED IN '.__FUNCTION__;
 			break;
 		};
+
+
 		if (is_file($thePath)) {
+
+      // fwrite($f, "------------------\n\n" . $thePath);
+
 			switch ($selector) {
 				case 'new':
 				case 'add':
 				case 'mod':
 				case 'ovw':
 					$file_content = file_get_contents($thePath);
-					$file_content = preg_replace('/'.WS.'+/',' ',$file_content);
+
+          //fwrite($f, "--------1111111111----------\n\n");
+
+					$file_content = preg_replace('/'.WS.'+/', ' ', $file_content);
+
+          //fwrite($f, "------2222222222------------\n\n");
+
 					$text_head = substr($file_content,0,stripos($file_content,'%BEGIN%')).'%BEGIN% -->';
 					$text_foot = '<!-- '.substr($file_content,stripos($file_content,'%END%'));
 					$dom = new DOMDocument('1.0', 'UTF-8');
@@ -223,6 +238,7 @@ function ajax_saveLink($selector = 'new', $id1='', $id2='', $label='', $what='',
 					forceUTF8($thePath);
 					if ($dom->load($thePath, DCTL_XML_LOADER)) {
 						$xpath = new DOMXPath($dom);
+
 						switch ($selector) {
 							case 'new':
 								$type = 'link';
@@ -262,16 +278,36 @@ function ajax_saveLink($selector = 'new', $id1='', $id2='', $label='', $what='',
 								};
 							break;
 							case 'ovw':
-								$query = 'id("'.$id2.'")';
-								$entries = $xpath->query($query);
+
+                //fwrite($f, "------ $query: pronti a morire? ------------ [[".memory_get_usage()."]]");
+
+                //fwrite($f, "------ 11 ?! ------------[".$entry->namespaceURI."]-- [[".memory_get_usage()."]]\n\n");
+                $entry = $dom->getElementById($id2);
+                //fwrite($f, "------ 22 ?! ------------ ".$entry->getAttribute('n')." > $label [[".memory_get_usage()."]]\n\n");
+				$entry->setAttribute('target', $id1);
+                //fwrite($f, "------ 33 ?! ------------[[".memory_get_usage()."]]\n\n");
+                if ($entry->getAttribute('n') != $label) {
+                    //fwrite($f, "------ 33 AA ?! ------(".$entry->getAttribute('n').")------[[".memory_get_usage()."]]\n\n");
+                    $entry->setAttributeNode(new DOMAttr('n', $label));
+			    }
+                //fwrite($f, "------ 44 ?! ------------[[".memory_get_usage()."]]\n\n");
+
+				if ((string) $entry->nodeValue == '')  $entry->nodeValue = $label;
+
+/*
+                                $query = 'id("'.$id2.'")';
+                                $entries = $xpath->query($query);
 								foreach ($entries as $entry) {
 									$entry->setAttribute('n', $label);
-									$entry->setAttribute('target',$id1);
-									if ((string)$entry->nodeValue == '')  $entry->nodeValue = $label;
+									$entry->setAttribute('target', $id1);
+                  fwrite($f, "------ dentro foreach, o sono gia' morto? :| ------------\n\n");
+									if ((string) $entry->nodeValue == '')  $entry->nodeValue = $label;
 								};
+*/
 							break;
 						};
 						if ($resultKO == '') {
+                            //fwrite($f, "------ Si salva vai!!  ------------[[".memory_get_usage()."]]\n\n");
 							$file_content = $dom->saveXML();
 							$file_content = preg_replace('/'.WS.'+/',' ',$file_content);
 							$from = stripos($file_content,'%BEGIN%')+strlen('%BEGIN% -->');

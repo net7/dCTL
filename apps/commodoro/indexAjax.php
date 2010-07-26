@@ -3,11 +3,12 @@
  $returnText = '';
 
 	/* AUTHENTICATE */
-	if (is_file(str_replace('//','/',dirname(__FILE__).'/').'.htaccess')) {
+/*	if (is_file(str_replace('//','/',dirname(__FILE__).'/').'.htaccess')) {
 		require_once(str_replace('//','/',dirname(__FILE__).'/').'../_shared/authenticate.inc.php');
 	} else {
   die('ERROR: access control not found... Fix it. Me, i abort.');
 	};
+*/
 	/* INITIALIZE */
 	require_once(str_replace('//','/',dirname(__FILE__).'/').'../_shared/config.inc.php');
 	require_once(str_replace(SYS_PATH_SEP_DOUBLE,SYS_PATH_SEP,dirname(__FILE__).SYS_PATH_SEP).'./config.inc.php');
@@ -57,32 +58,53 @@
 
  switch ($action) {
   case 'update_imt':
+  
+    // 19/07
+    // $f = fopen('/tmp/diocaro.log', 'a');
+  
    $xml = base64_decode($imt);
+   //fwrite($f, $xml);
+   $xml2 = preg_replace("/([0-9]{4})[0-9][0-9]*/", "$1", $xml);
+   //fwrite($f, "---#### XML 2 ######################################\n\n\n\n\n\n".$xml2."---#### XML 2 ######################################\n\n\n\n\n\n");
+   
    $simplexml = simplexml_load_string($xml);
+
+
    if ($simplexml) {
     $returnText .= '<ul>';
     foreach ($simplexml->xml->a as $xml) {
+      
+      // fwrite($f, "------------------\n\n" . $xml->asXML());
+      
      $ref = (string)$xml['r']; // => @xml:id
      $src = (string)$xml['s']; // => @target[1]
      $tgt = (string)$xml['t']; // => @target[2]
      $lbl = (string)$xml['l']; // => @n
-// <ref xml:id="afd-1xvJpQG8U5" type="link" n="pallonzoli" target="xml://afd/marmi_img/p004ki001 img://afd-marmi_p1_08_pw.jpg@0.1160:0:4520:0.4030:0:4520:0.4030:0.7300:0.1160:0.7300">palle di cerchi</ref>
      $returnText .= '<li>';
+
      if ($tgt == '') {
-      if ($ref == '') {
-       $returnText .= ''; // IGNORED
-      } else {
-       $returnText .= ajax_deleteLink($ref, $src, $lbl, 'map', true);
-      };
+       if ($ref == '') {
+         // fwrite($f, "------------------\n\n 111");
+         $returnText .= ''; // IGNORED
+       } else {
+         // fwrite($f, "------------------\n\n 222");
+         $returnText .= ajax_deleteLink($ref, $src, $lbl, 'map', true);
+       };
      } else {
-      if ($ref == '') {
-       $returnText .= ajax_saveLink('new', $src, $tgt, $lbl, 'map', true);
-      } else {
-       $returnText .= ajax_saveLink('ovw', $src.' '.$tgt, $ref, $lbl ,'map', true);
-      };
+       if ($ref == '') {
+         // fwrite($f, "------------------\n\n 333");
+         $returnText .= ajax_saveLink('new', $src, $tgt, $lbl, 'map', true);
+       } else {
+         /// fwrite($f, "------------------\n\n 444 INIZIO");
+         $returnText .= ajax_saveLink('ovw', $src.' '.$tgt, $ref, $lbl ,'map', true);
+         // fwrite($f, "------------------\n\n 444 FINE ?");
+       };
      };
-     $returnText .= NOVEOPIU ? htmlspecialchars($xml->asXML()) : '';
+     // $returnText .= NOVEOPIU ? htmlspecialchars($xml->asXML()) : '';
      $returnText .= '</li>';
+
+     // fwrite($f, " FINE FINE FINE ------------------\n\n");
+     
     };
     $returnText .= '</ul>';
    } else {
