@@ -173,11 +173,13 @@
 									<xsl:apply-templates select="node()" />
 									<!-- - - - - - - - - - - - - - - - -->
 									<!-- ADD A FAKE SPACE FOR READABILITY -->
+<!--
 									<xsl:if
 										test="self::tei:p or self::tei:div or self::tei:head or self::tei:name or self::tei:rs or
 										self::tei:figure">
 										<xsl:text> </xsl:text>
 									</xsl:if>
+-->
 									<!-- - - - - - - - - - - - - - - - -->
 								</xsl:otherwise>
 							</xsl:choose>
