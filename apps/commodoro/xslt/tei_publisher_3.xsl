@@ -27,6 +27,10 @@
 	<!-- - - - - - - - - - - - - - - - -->
 	<!-- ROOT -->
 	<!-- - - - - - - - - - - - - - - - -->
+  <xsl:param name="collection" />
+  <xsl:param name="package" />
+
+
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping="yes">&lt;!DOCTYPE TEI SYSTEM "</xsl:text>
 		<xsl:value-of select="$basepath" />
@@ -37,7 +41,7 @@
 			%TEI.extension.dtd;
 			]&gt;
 		</xsl:text>
-		<xsl:apply-templates />
+		<xsl:apply-templates /> 
 	</xsl:template>
 	<!-- - - - - - - - - - - - - - - - -->
 	<!-- ANY -->
@@ -182,6 +186,15 @@
 					<xsl:apply-templates select="@ana" />
 					<xsl:apply-templates select="node()" />
 				</xsl:when>
+         <!-- KEY_ITEM -->
+    		<xsl:when test="@ana = 'key_item'">
+	        <xsl:attribute name="n"><xsl:value-of select="php:function('get_n_from_xml_id', string(@xml:id), string($collection), string($package))" /></xsl:attribute>
+					<xsl:apply-templates select="@xml:id" />
+					<xsl:apply-templates select="@ana" />
+ 				<xsl:apply-templates select="@part" />
+					<xsl:apply-templates select="node()" />
+				</xsl:when>
+
 					<!-- ANY OTHER -->
 				<xsl:otherwise>
 					<xsl:apply-templates select="@* | node()" />

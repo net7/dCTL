@@ -2340,6 +2340,16 @@ function publish_SendToXDB ($exist, $collName, $packName, $partName, &$operation
 																$operationsPublish .= '&#160;aggiorno...';
 																if ($mysql_dbName && $mysql_dbIconclass) {
 																	try {
+																		// the two parameters (collection and package) are needed for key_items, they will 
+																		// be used by the function *get_n_from_xml_id*, which is called from xslt 
+																    $xsl_proc->setParameter('', 'collection', $collName);
+											 							// if $packName is empty, we need to do some ugly hack on the 
+																		if ($packName == ''){
+ 												 					  	$package = substr ($entry, strpos($entry, $collName . '-') + strlen($collName . '-'), strrpos ($entry, '.') - strlen($entry)); 
+																		} else {
+												    					$package = $packName;
+																		} 
+																		$xsl_proc->setParameter('', 'package', $package);
 																		$text = $xsl_proc->transformToXML($xml_dom);
 																	} catch (Exception $e) {
 																		$operationsPublish .= '<span class="error">impossibile trasformare XML "'.$entry.'"... {'.$e.'}</span><br />';
@@ -2866,5 +2876,43 @@ function ajax_loadFullTree ($upToLevel=0, $collection_id='', $media_id='', $pack
 	};
 	return $resultText;
 };
+
+function get_n_from_xml_id($xml_id, $collection_id, $package){
+  //used in publication of key_items to get the value of the "n" attribute.
+
+	// stolen from other code, we construct the path to the _mapper file.
+  $file_mapper =  DCTL_PROJECT_PATH.$collection_id.SYS_PATH_SEP.DCTL_FILE_MAPPER;
+
+	// we read the code, strip the obnoxious header and footer (which would break the
+	// DOMDocument creation) and add a root element to make a "valid" xml to search through. 
+
+	$file_content = file_get_contents($file_mapper);
+	$file_content = preg_replace('/'.WS.'+/',' ',$file_content);
+	$from = stripos($file_content,'%BEGIN%')+strlen('%BEGIN% -->');
+	$to = stripos($file_content,'%END%')-strlen('<-- ') - $from -1;
+	$text_content = substr($file_content,$from,$to);
+
+	$xml_dom = new DOMDocument('1.0', 'UTF-8');
+  $xml_dom->preserveWhiteSpace = false;
+	forceUTF8($text_content);
+  $xml_dom->loadXML('<root>'.$text_content.'</root>');
+
+  // this is the @target content we're after
+  $target_to_find = 'xml://' . $collection_id . '/' . $package . '/'. $xml_id;
+	$xquery = "//*[contains(@target, '" . $target_to_find . "') and @n != '']";
+
+	$xpath = new DOMXPath($xml_dom);
+  $result = $xpath->query($xquery)->item(0);
+
+	if ($result) {
+    return $result ->getAttribute('n');
+	} else {
+	 // maybe the searched item wasn't found ?
+   return '';
+	}
+
+
+
+}
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
