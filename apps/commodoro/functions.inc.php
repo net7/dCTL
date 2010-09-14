@@ -2904,7 +2904,7 @@ function get_n_from_xml_id($xml_id, $collection_id, $package){
 	$xpath = new DOMXPath($xml_dom);
   $result = $xpath->query($xquery)->item(0);
 
-	if ($result) {
+	if (is_a($result, 'DOMElement')) {
     return $result ->getAttribute('n');
 	} else {
 	 // maybe the searched item wasn't found ?
