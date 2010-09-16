@@ -798,7 +798,9 @@ class dCTL {
                         $gotError = $this->_db->getError();
                         $resultXML = (array) $result["XML"];
                         foreach ($resultXML as $node) {
-                          $node = preg_replace('/<pb.*ed\s*=\s*".*fake.*".*>/', '', $node); // strip out <pb ed="fake" />
+                            /* Simone 16/09/2010: let the xsl take care of the fake pb ..
+                            $node = preg_replace('/<pb.*ed\s*=\s*".*fake.*".*?>/', '', $node); // strip out <pb ed="fake" />
+                            */
                           if ($withHierarchy) {
                            $node = preg_replace('/(<div.*)xml:id(\s*=\s*".*".*>)/', '$1sameAs$2', $node); // strip out <pb ed="fake" />
                           };

@@ -1,11 +1,6 @@
-
 (: http://wiki.tei-c.org/index.php/Milestone-chunk.xquery :)
 
-declare function tei:milestone-chunk(
-		$ms1 as element(),
-		$ms2 as element(),
-		$node as node()*
-) as node()* {
+declare function tei:milestone-chunk($ms1 as element(), $ms2 as element(), $node as node()*) as node()* {
 		typeswitch ($node)
 				case element() return
 						if ($node is $ms1) then $node
@@ -22,58 +17,54 @@ return tei:milestone-chunk($ms1, $ms2, $i) }
 						else ()
 };
 
-(: http://www.ctl.sns.it/dctl :)
-
 declare function tei:getFullPage($ms1 as node(), $parent as node()) as node()* {
-		let $ms2 := subsequence($parent/descendant::tei:pb, 1)[. >> $ms1][not(string(attribute::ed) = "fake")][1]
-		let $ms2 := if ($ms2) then $ms2 else subsequence($parent/descendant::tei:pb, 1)[. >> $ms1][(string(attribute::ed) = "fake")][1]
-  let $node := tei:milestone-chunk($ms1, $ms2, $parent)
+	let $ms2 := subsequence($parent/descendant::tei:pb, 1)[. >> $ms1][not(string(attribute::ed) = "fake")][1]
+    (: Simone 16/09/2010 prendi il pezzo fino all'ultimo pb fake, non fino al primo.. visto che ce n'e' un trilione. :)
+    let $ms2 := if ($ms2) then $ms2 else subsequence($parent/descendant::tei:pb, 1)[. >> $ms1][string(attribute::ed) = "fake"][last()]
+    let $node := tei:milestone-chunk($ms1, $ms2, $parent)
 		return $node
- };
+};
 
 declare function tei:getPage($node as node(), $justRefs as xs:integer) as node()* {
-		let $node :=
-		(: se è una div allora deve contenere un pb :)
-		 if ($node[self::tei:div]) (: * :)
-		 then
-		  if ($node[child::tei:pb])
-     then $node
-     else $node/child::*[. >> $node/child::tei:pb[1]][1]
-   (: se è un pb allora ha un figlio successivo :)
-		 else
-		  if ($node[self::tei:pb])
-  		 then $node/following-sibling::*[. >> $node][1]
-	   	(: oppure è lui :)
-		   else $node
-		return
+    let $node :=
+	    (: se è una div allora deve contenere un pb :)
+	    if ($node[self::tei:div]) (: * :)
+		then 
+		    if ($node[child::tei:pb])
+            then $node
+            else $node/child::*[. >> $node/child::tei:pb[1]][1]
+        (: se è un pb allora ha un figlio successivo :)
+        else
+            if ($node[self::tei:pb])
+            then $node/following-sibling::*[. >> $node][1]
+	   	    (: oppure è lui :)
+            else $node
+        return
 		(: becca il blocco container :)
-			let $parent := tei:getBlock($node)
-		 (: in questo blocco ci sono altri nodi pb dopo questo? :)
-			let $parent :=
-			 if ((count($parent/descendant::tei:pb[. >> $node]) > 0) ) (: and (count($parent/descendant::tei:pb[not(string(attribute::ed) = "fake")][. << $node]) > 0) :)
-		   (: si, buono :)
-				 then $parent
-		   (: no, becca il blocco del blocco :)
-				 else $parent/ancestor::tei:div[count((./descendant::tei:pb[. >> $node])) > 0][1]
-			let $ms1 := (subsequence($parent/descendant::tei:pb[not(string(attribute::ed) = "fake")], 1)[. << $node])[position()=last()]
-			let $ms1 := if ($ms1) then $ms1 else $parent/descendant::tei:pb[not(string(attribute::ed) = "fake")][1]
-			return
-			if ($justRefs = 1)
-				then $ms1/@xml:id
-			else
-			 if ($justRefs = 2)
-				 then $ms1 (: usa solo $ms1 per <pb/> :)
-				else
-				 tei:getFullPage($ms1, $parent)
+		let $parent := tei:getBlock($node)
+        (: in questo blocco ci sono altri nodi pb dopo questo? :)
+        let $parent :=    
+            if ((count($parent/descendant::tei:pb[. >> $node]) > 0) ) (: and (count($parent/descendant::tei:pb[not(string(attribute::ed) = "fake")][. << $node]) > 0) :)
+            (: si, buono :)
+            then $parent
+            (: no, becca il blocco del blocco :)
+            else $parent/ancestor::tei:div[count((./descendant::tei:pb[. >> $node])) > 0][1]
+		let $ms1 := (subsequence($parent/descendant::tei:pb[not(string(attribute::ed) = "fake")], 1)[. << $node])[position()=last()]
+		let $ms1 := if ($ms1) then $ms1 else $parent/descendant::tei:pb[not(string(attribute::ed) = "fake")][1]
+		return
+		if ($justRefs = 1)
+    	then $ms1/@xml:id
+    	else
+        if ($justRefs = 2)
+        then $ms1 (: usa solo $ms1 per <pb/> :)
+        else tei:getFullPage($ms1, $parent)
 };
 
 declare function tei:getBlock($node as node()) as node() {
-  let $block :=
- 		if ($node/@type="dctlObject") then
-	   $node
-		  else
-				$node/ancestor-or-self::tei:div[./@xml:id and ./ancestor-or-self::tei:text][position()=last()]
-		  return $block
+    let $block :=
+     	if ($node/@type="dctlObject") then $node
+        else $node/ancestor-or-self::tei:div[./@xml:id and ./ancestor-or-self::tei:text][last()]
+	return $block
 };
 
 declare function tei:getTree ( $node as node(), $embed as node()* ) as node()* {
