@@ -1,0 +1,6 @@
+AuthName "Login to dCTL"
+AuthType Basic
+AuthUserFile /path/to/apps/_shared/_protected/.htpasswd
+AuthGroupFile /dev/null
+Require valid-user
+
