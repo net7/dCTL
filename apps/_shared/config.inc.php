@@ -51,9 +51,9 @@ if (!is_dir($_DCTL_DATA_FOLDER)) die('ERROR: $_DCTL_DATA_FOLDER ('.$_DCTL_DATA_F
 if (!is_dir($_DCTL_REPO_FOLDER)) die('ERROR: $_DCTL_REPO_FOLDER ('.$_DCTL_REPO_FOLDER.') not found... Fix it in "'.dirname(dirname(__FILE__)).'/config.inc.php". Me, i abort.');
 // + - - - - - - - - - - - - - - - - - -
 // | MYSQL CONFIG
-if (!defined('MYSQL_HOST_PN')) define('MYSQL_HOST_PN', $_SERVER['SERVER_NAME']); // MySQL host x db NAME
+if (!defined('MYSQL_HOST_PN')) define('MYSQL_HOST_PN', 'localhost'); // MySQL host x db NAME
 if (!defined('MYSQL_PORT_PN')) define('MYSQL_PORT_PN', 3306); // MYSQL port x db NAME
-if (!defined('MYSQL_HOST_IC')) define('MYSQL_HOST_IC', $_SERVER['SERVER_NAME']); // MySQL host x db ICONCLASS
+if (!defined('MYSQL_HOST_IC')) define('MYSQL_HOST_IC', 'localhost'); // MySQL host x db ICONCLASS
 if (!defined('MYSQL_PORT_IC')) define('MYSQL_PORT_IC', 3306); // MYSQL port x db ICONCLASS
 define('DCTL_DB_NAME', 'dctl_name');
 define('DCTL_DB_ICONCLASS', 'dctl_iconclass');
