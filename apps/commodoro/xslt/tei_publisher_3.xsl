@@ -75,17 +75,17 @@
 									<xsl:choose>
 										<xsl:when test="self::tei:div">
 											<xsl:value-of select="child::tei:pb[1]/@label" />
-											<xsl:text>.</xsl:text>
+											<xsl:text>. </xsl:text>
 											<xsl:value-of select="child::tei:pb[1]/@n" />
 										</xsl:when>
 										<xsl:when test="self::tei:pb">
 											<xsl:value-of select="@label" />
-											<xsl:text>.</xsl:text>
+											<xsl:text>. </xsl:text>
 											<xsl:value-of select="@n" />
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:value-of select="preceding::tei:pb[1]/@label" />
-											<xsl:text>.</xsl:text>
+											<xsl:text>. </xsl:text>
 											<xsl:value-of select="preceding::tei:pb[1]/@n" />
 										</xsl:otherwise>
 									</xsl:choose>
