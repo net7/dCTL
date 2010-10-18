@@ -1,7 +1,7 @@
 <teiHeader xml:id="&collection_id;-&package_id;.header">
  <fileDesc>
   <titleStmt>
-   <title type="main">&source_title_main; (Edizione di riferimento)</title>
+   <title type="main">&source_title_main;</title>
    <title type="sub">&source_title_sub;</title>
    <title type="alt">&source_title_parallel;</title>
    <author>&source_author;</author>
