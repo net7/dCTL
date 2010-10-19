@@ -474,7 +474,7 @@ class dCTL {
   protected function _parse_uri($resourceList='', $xpath='') {
     // | an array is needed
     if (! is_array($resourceList)) {
-      $rs = (split(",", $resourceList));
+      $rs = (split(",,", $resourceList));
       $resourceList = array();
       $next = true;
       foreach ($rs as $k=>$str) {
