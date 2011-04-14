@@ -387,10 +387,20 @@ class exist {
 
 	// UPLOAD RESOURCE
 	public function uploadResource($location, $document) {
+
+
   if ($this->getError()) return false;
-	$handle = fopen($document, "rb");
-		$document_content = fread($handle, filesize($document));
-		fclose($handle);
+
+echo "filesize = " . filesize($document) . " doc = " . $document;
+
+//  WARNING: this code won't work, it will truncate the files for some unknown reason
+//	$handle = fopen($document, "rb");
+//		$document_content = fread($handle, filesize($document));
+//		fclose($handle);
+	
+// this code now work, and it's said to heve even better performance.
+		$document_content = file_get_contents($document, FILE_USE_INCLUDE_PATH);
+
   $encoding = 'UTF-8';
 
 	 if (empty($document_content)) {
@@ -398,12 +408,18 @@ class exist {
 		 return false;
 	 }
 		try {
+
+
+$f = fopen('/tmp/commodoro_import.log', 'w');
+fwrite($f, $document_content);
+
 			// encode only to base64 if php version lesser than 5.1
 			// patch by Bastian Gorke bg/at\ipunkt/dot\biz
 			if (!version_compare(PHP_VERSION, '5.1.0', 'ge')) {
 				$document_content = base64_encode($document_content);
 			}
 	 	$parameters = array('sessionId' => $this->_session, 'data' => $document_content, 'encoding' => $encoding, 'path' => $location, 'replace' => TRUE);
+
 			return $this->soapCall('store', $parameters);
 		}
 		catch( SoapFault $e) {
