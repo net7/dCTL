@@ -391,8 +391,6 @@ class exist {
 
   if ($this->getError()) return false;
 
-echo "filesize = " . filesize($document) . " doc = " . $document;
-
 //  WARNING: this code won't work, it will truncate the files for some unknown reason
 //	$handle = fopen($document, "rb");
 //		$document_content = fread($handle, filesize($document));
