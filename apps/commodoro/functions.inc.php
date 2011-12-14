@@ -2062,7 +2062,12 @@ function publish_recurseMedia($pathFrom, $pathTo, &$operationsPublish) {
 					hardFlush(&$operationsPublish);
 				} else {
 					$srcx = filemtime($fullsrc);
-					$tgtx = false || @filemtime($fulldst);
+
+					$tgtx = @filemtime($fulldst);
+					if ($tgtx == false){
+						echo "false! ";
+						$tgtx = 0;
+         }
 					if ($srcx > $tgtx) {
 						$operationsPublish .= '&gt; copio "'.basename($pathFrom).SYS_PATH_SEP.$entry.'<br />';
 						hardFlush(&$operationsPublish);
