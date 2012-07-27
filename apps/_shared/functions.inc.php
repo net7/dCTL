@@ -335,7 +335,7 @@ function makePreview ($theLocation, $g_srcfile, $overwrite=TRUE, $forcedsize=200
 			};
  	};
 	};
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - //
 function createPreview ($g_srcfile, $overwrite=TRUE, $forcedsize=200, $imgcomp=0) {
@@ -350,7 +350,7 @@ function createPreview ($g_srcfile, $overwrite=TRUE, $forcedsize=200, $imgcomp=0
 	 };
 	} else {
 		makePreview (DCTL_MEDIA_SML, $g_srcfile, $overwrite, $forcedsize, $imgcomp);
-		makePreview (DCTL_MEDIA_MED, $g_srcfile, $overwrite, $forcedsize*2.5, $imgcomp);
+		makePreview (DCTL_MEDIA_MED, $g_srcfile, $overwrite, $forcedsize*5, $imgcomp);
 	};
 };
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - //

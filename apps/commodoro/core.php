@@ -537,12 +537,19 @@ class dCTL {
   }
   // +----------------------------------------------------------------------+
   protected function _get_resource ($justRefs=false, $resourceList='', $xpath='') {
+
+
+
     $asOptions = $xpath != '';
     $xpath = trim($xpath);
     $resourceList = $this->_parse_uri($resourceList, $xpath);
+
+
+
     $docList = array();
     foreach($resourceList as $key4docList=>$parsed) {
       $resList = array();
+
       switch ($parsed['scheme']) {
         case 'xml':
         case 'img': {
@@ -556,6 +563,7 @@ class dCTL {
                       $this->_get_collection_record(false, $xml_resource, &$resList[]);
                     } else {
                       if (preg_match('/^(_\w{3})|(\w*_)$/',  $parsed['package'], $preg_match)) {
+//
                         $this->_get_package_list(false, $xml_resource, &$resList, $preg_match[0]);
                       } else {
                         $package = (preg_match('/\.xml$/i', $parsed['package']) ? $parsed['package'] : $parsed['package'].'.xml');
@@ -574,6 +582,10 @@ class dCTL {
                       $packageList = $resList;
                       unset($resList);
                       $resList = array();
+//danilo
+//print_r ($packageList); exit();
+
+
                       foreach ($packageList as $key4package=>$package) {
                         $parsed_locator = $parsed['locator'];
                         $parsed_query = $parsed['query'];
@@ -587,6 +599,7 @@ class dCTL {
                         $context .= ($parsed_query) ? $parsed_query : '';
                         $last_attr = '';
                         $last_val = '';
+
                         if (preg_match('/\@(\w+)'.WS.'*.?'.WS.'*='.WS.'*"'.WS.'*(.*)'.WS.'*"'.WS.'*/', $context, $matches)) {
                           $last_attr = $matches[count($matches)-2];
                           $last_val = $matches[count($matches)-1];
@@ -719,8 +732,15 @@ class dCTL {
                             $xquery .= "\n".'  $node '; // <XXX>XXX</XXX>
 
                           $xquery .= "\n".'  else ';
-                          $xquery .= "\n".'   let $what := if (/id($node)) then ';
-                          $xquery .= "\n".'    tokenize(tokenize($node, "'.WS.'"), "'.WS.'") else ';
+// danilo: I don't know what happens here, but this additional tokenizer (and what is its purpose?)
+// will cause some names to be shown truncated (and then indexes won't work in those cases, as it
+// will search the truncated version of the names, which of course aren't found)
+//danilo                          $xquery .= "\n".'   let $what := if (/id($node)) then ';
+//danilo                          $xquery .= "\n".'    tokenize(tokenize($node, "'.WS.'"), "'.WS.'") else ';
+//danilo: I simply skip the tokenization, as it appear to me it's not suiting well here (AM I WRONG?)
+
+			$xquery .= "\n".'   let $what := ';
+
 //                           if ($jolly) {
                           $xquery .= ' $node ';
 //                             } else {
@@ -743,6 +763,7 @@ class dCTL {
 //                           $xquery .= "\n".' if (matches($e, "<\w+")) then $e else for $x in distinct-values($e) order by $x return <item>{$x}</item> ';
                           $xquery .= "\n".'  for $x in distinct-values($e) order by $x return if (normalize-space($x) ne "") then element item {normalize-space($x)} else ()';
                           if ($howMany) $xquery .= ', '.$startAt.', '.$howMany.' ) return $final ';
+
                         } else {
                           $xquery .= "\n".' let $base := xmldb:document("'.$xml_resource.'")//tei:text ';
                           $xquery .= "\n".' for $node in ';
@@ -790,6 +811,7 @@ class dCTL {
 // $this->_getDebug($parsed);
 // $this->_getDebug($context);
 // $this->_getDebug($xquery);
+//echo DCTL_XQUERY_BASE.$xquery;exit();
                         if ($this->_debug && NOVEOPIU) {
                           $xq = DCTL_TMP_PATH.'xquery_dbg'.basename($xml_resource).'.xq';
                           @file_put_contents($xq, DCTL_XQUERY_BASE.str_ireplace('  ', ' '."\n".' ', $xquery));
