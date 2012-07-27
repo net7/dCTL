@@ -2065,7 +2065,6 @@ function publish_recurseMedia($pathFrom, $pathTo, &$operationsPublish) {
 
 					$tgtx = @filemtime($fulldst);
 					if ($tgtx == false){
-						echo "false! ";
 						$tgtx = 0;
          }
 					if ($srcx > $tgtx) {
